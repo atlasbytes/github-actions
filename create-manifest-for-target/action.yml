@@ -1,0 +1,47 @@
+name: Create Manifest for Target
+
+inputs:
+  image-name:
+    description: Name of the image
+    type: string
+    required: true
+  target:
+    description: Name of the dockerfile target
+    type: string
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare
+      shell: bash
+      run: |
+        image_name=${{ inputs.image-name }}
+        echo "SAFE_IMAGE_NAME=${image_name//\//-}" >> $GITHUB_ENV
+    - name: Download digests (${{ inputs.target }})
+      uses: actions/download-artifact@v4
+      with:
+        path: /tmp/digests/${{ env.SAFE_IMAGE_NAME }}/${{ inputs.target }}
+        pattern: digests-${{ env.SAFE_IMAGE_NAME }}-${{ inputs.target }}-*
+        merge-multiple: true
+    - name: Docker meta (${{ inputs.target }})
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ inputs.image-name }}
+        flavor: |
+          prefix=${{ inputs.target }}-,onlatest=true
+        tags: |
+          type=ref,event=branch
+          type=ref,event=tag
+          type=ref,event=pr,prefix=${{ inputs.target }}-pr-
+    - name: Create manifest list and push (${{ inputs.target }})
+      working-directory: /tmp/digests/${{ env.SAFE_IMAGE_NAME }}/${{ inputs.target }}
+      shell: bash
+      run: |
+        docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+        $(printf '${{ inputs.image-name }}@sha256:%s ' *)
+    - name: Inspect image
+      shell: bash
+      run: |
+        docker buildx imagetools inspect ${{ inputs.image-name }}:${{ steps.meta.outputs.version }}

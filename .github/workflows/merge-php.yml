@@ -1,4 +1,4 @@
-name: Merge images to manifest
+name: Merge PHP images to manifest
 
 on:
   workflow_call:
@@ -33,7 +33,23 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Create Manifest
-        uses: Ilyes512/github-actions/create-manifest@0.2.0
+      - name: Create Manifest (runime)
+        uses: Ilyes512/github-actions/create-manifest-for-target@0.2.0
         with:
           image-name: ${{ steps.image_name.outputs.lowercase }}
+          target: runtime
+      - name: Create Manifest (builder)
+        uses: Ilyes512/github-actions/create-manifest-for-target@0.2.0
+        with:
+          image-name: ${{ steps.image_name.outputs.lowercase }}
+          target: builder
+      - name: Create Manifest (builder_nodejs)
+        uses: Ilyes512/github-actions/create-manifest-for-target@0.2.0
+        with:
+          image-name: ${{ steps.image_name.outputs.lowercase }}
+          target: builder_nodejs
+      - name: Create Manifest (vscode)
+        uses: Ilyes512/github-actions/create-manifest-for-target@0.2.0
+        with:
+          image-name: ${{ steps.image_name.outputs.lowercase }}
+          target: vscode

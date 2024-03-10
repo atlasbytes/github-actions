@@ -29,6 +29,12 @@ runs:
       uses: docker/metadata-action@v5
       with:
         images: ${{ inputs.image-name }}
+        flavor: |
+          prefix=${{ inputs.target }}-,onlatest=true
+        tags: |
+          type=ref,event=branch
+          type=ref,event=tag
+          type=ref,event=pr,prefix=${{ inputs.target }}-pr-
     - name: Create manifest list and push (${{ inputs.target }})
       working-directory: /tmp/digests/${{ env.SAFE_IMAGE_NAME }}/${{ inputs.target }}
       shell: bash

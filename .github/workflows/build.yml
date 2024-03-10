@@ -54,7 +54,7 @@ jobs:
         with:
           string: ghcr.io/${{ github.repository }}
       - name: Build and Push by digest
-        uses: Ilyes512/github-actions/build-image@main
+        uses: Ilyes512/github-actions/build-image@e884cce9bf717362741609245ecba574a784e848
         with:
           name: ${{ steps.image_name.outputs.lowercase }}
           platform: ${{ inputs.platform }}

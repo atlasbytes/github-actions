@@ -1,12 +1,12 @@
 name: Build Image by Target
 
 inputs:
-  image-name:
-    description: Name of the image
-    type: string
-    required: true
   platform:
     description: Platform i.e. "linux/amd64", "linux/arm64"
+    type: string
+    required: true
+  image-name:
+    description: Name of the image
     type: string
     required: true
   dockerfile:

@@ -10,14 +10,11 @@ inputs:
     type: string
     required: true
 
-default:
-  run:
-    shell: bash
-
 runs:
   using: composite
   steps:
     - name: Prepare
+      shell: bash
       run: |
         image_name=${{ inputs.image-name }}
         echo "SAFE_IMAGE_NAME=${image_name//\//-}" >> $GITHUB_ENV
@@ -34,9 +31,11 @@ runs:
         images: ${{ inputs.image-name }}
     - name: Create manifest list and push (${{ inputs.target }})
       working-directory: /tmp/digests/${{ env.SAFE_IMAGE_NAME }}/${{ inputs.target }}
+      shell: bash
       run: |
         docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
         $(printf '${{ inputs.image-name }}@sha256:%s ' *)
     - name: Inspect image
+      shell: bash
       run: |
         docker buildx imagetools inspect ${{ inputs.image-name }}:${{ steps.meta.outputs.version }}

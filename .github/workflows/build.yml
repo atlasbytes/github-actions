@@ -1,0 +1,67 @@
+name: Build Images
+
+on:
+  workflow_call:
+    inputs:
+      runner-os:
+        description: Operating system i.e. "ubuntu-22.04"
+        type: string
+        required: true
+      platform:
+        description: Platform i.e. "linux/amd64", "linux/arm64"
+        type: string
+        required: true
+      cache-key:
+        description: Cache key
+        type: string
+        required: true
+      cache-restore-keys:
+        description: Cache restore keys list
+        type: string
+        required: true
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ${{ inputs.runner-os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ inputs.cache-key }}
+          restore-keys: ${{ inputs.cache-restore-keys }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ inputs.platform }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Image name
+        id: image_name
+        uses: ASzc/change-string-case-action@v6
+        with:
+          string: ghcr.io/${{ github.repository }}
+      - name: Build and Push by digest
+        uses: Ilyes512/github-actions/build-image@main
+        with:
+          name: ${{ steps.image_name.outputs.lowercase }}
+          platform: ${{ inputs.platform }}
+        # Temp fix?
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

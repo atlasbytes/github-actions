@@ -10,7 +10,7 @@ on:
       image-name:
         description: Image name
         type: string
-        default: required
+        required: true
 
 jobs:
   merge:

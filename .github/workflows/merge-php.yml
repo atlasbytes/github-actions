@@ -14,7 +14,7 @@ on:
 
 jobs:
   merge:
-    name: Merge Image
+    name: Merge Images
     runs-on: ${{ inputs.runner-os }}
     steps:
       - name: Checkout

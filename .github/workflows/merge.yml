@@ -30,6 +30,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Create Manifest
-        uses: Ilyes512/github-actions/create-manifest@main
+        uses: Ilyes512/github-actions/create-manifest@e884cce9bf717362741609245ecba574a784e848
         with:
           name: ${{ steps.image_name.outputs.lowercase }}

@@ -18,7 +18,7 @@ on:
       dockerfile:
         description: Dockerfile path
         type: string
-        required: true
+        default: Dockerfile
       cache-key:
         description: Cache key
         type: string

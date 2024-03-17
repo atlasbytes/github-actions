@@ -16,6 +16,7 @@ jobs:
   merge:
     name: Merge Images
     runs-on: ${{ inputs.runner-os }}
+    if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

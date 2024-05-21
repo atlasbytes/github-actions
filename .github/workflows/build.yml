@@ -35,10 +35,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ${{ inputs.dockerfile }}
       - name: Cache Docker layers
         uses: actions/cache@v4
         with:

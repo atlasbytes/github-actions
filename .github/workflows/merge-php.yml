@@ -49,8 +49,3 @@ jobs:
         with:
           image-name: ${{ steps.image_name.outputs.lowercase }}
           target: builder_nodejs
-      - name: Create Manifest (vscode)
-        uses: Ilyes512/github-actions/create-manifest-for-target@0.2.2
-        with:
-          image-name: ${{ steps.image_name.outputs.lowercase }}
-          target: vscode

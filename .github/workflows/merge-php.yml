@@ -3,8 +3,8 @@ name: Merge PHP images to manifest
 on:
   workflow_call:
     inputs:
-      runner-os:
-        description: Operating system i.e "ubuntu-22.04"
+      runs-on:
+        description: Runner name i.e. default runner "ubuntu-24.04"
         type: string
         required: true
       image-name:
@@ -15,7 +15,7 @@ on:
 jobs:
   merge:
     name: Merge Images
-    runs-on: ${{ inputs.runner-os }}
+    runs-on: ${{ inputs.runs-on }}
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout

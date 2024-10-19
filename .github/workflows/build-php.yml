@@ -3,8 +3,8 @@ name: Build PHP Images
 on:
   workflow_call:
     inputs:
-      runner-os:
-        description: Operating system i.e. "ubuntu-22.04"
+      runs-on:
+        description: Runner name i.e. default runner "ubuntu-24.04"
         type: string
         required: true
       platform:
@@ -31,7 +31,7 @@ on:
 jobs:
   build:
     name: Build Image
-    runs-on: ${{ inputs.runner-os }}
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
